@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
   FileText, Briefcase, MessageSquare, CheckSquare, User, Target,
@@ -504,7 +505,7 @@ function FinalCTA() {
 function Footer() {
   return (
     <footer className="border-t py-12" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2 font-heading font-bold text-white">
             <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #8B5CF6, #06B6D4)' }}>
@@ -517,7 +518,15 @@ function Footer() {
               <a key={link} href={`#${link.toLowerCase().replace(/\s/g, '-')}`} className="text-sm" style={{ color: '#64748B' }}>{link}</a>
             ))}
           </div>
-          <p className="text-xs" style={{ color: '#64748B' }}>© 2026 JobAgent007. Built with AI.</p>
+          <p className="text-xs" style={{ color: '#64748B' }}>© {new Date().getFullYear()} Nexgen Tech Labs. All rights reserved.</p>
+        </div>
+        {/* Legal links */}
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 pt-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }}>
+          <Link href="/terms" className="text-xs hover:underline" style={{ color: '#64748B' }}>Terms &amp; Conditions</Link>
+          <Link href="/privacy" className="text-xs hover:underline" style={{ color: '#64748B' }}>Privacy Policy</Link>
+          <Link href="/data-compliance" className="text-xs hover:underline" style={{ color: '#64748B' }}>Data Compliance</Link>
+          <a href="mailto:media@jobsagent007.com" className="text-xs hover:underline" style={{ color: '#64748B' }}>Contact</a>
+          <span className="text-xs" style={{ color: '#334155' }}>Registered in the United Kingdom</span>
         </div>
       </div>
     </footer>
