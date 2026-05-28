@@ -36,7 +36,7 @@ GCP Cloud Run (Python)       →   Supabase (write scraped jobs)
 | Language | TypeScript |
 | Styling | Tailwind CSS + shadcn/ui |
 | Animation | Framer Motion |
-| Auth | Clerk (`@clerk/nextjs`) |
+| Auth | Supabase Auth (`@supabase/ssr`) |
 | Database | Supabase (Postgres) |
 | File Storage | Supabase Storage |
 | AI | Anthropic Claude (`@anthropic-ai/sdk`) — claude-sonnet-4-6 |
@@ -193,11 +193,13 @@ Always use these — do not reinvent them:
 
 ## Auth Pattern
 
-- All `/dashboard/*`, `/profile`, `/cv-agent`, `/job-matches`, `/applications`, `/interview-prep`, `/settings` are **protected**
-- `middleware.ts` uses Clerk to protect these routes
-- Public routes: `/`, `/pricing`
-- API routes: validate `auth()` from `@clerk/nextjs/server` before every DB or AI call
-- Clerk JWT is mapped to Supabase JWT for RLS (use Clerk's Supabase JWT template)
+- Auth: **Supabase Auth** via `@supabase/ssr` — no Clerk
+- All `/dashboard/*`, `/profile`, `/cv-agent`, `/job-matches`, `/applications`, `/interview-prep`, `/settings` are **protected** in `proxy.ts`
+- Unauthenticated users are redirected to `/login`
+- Public routes: `/`, `/pricing`, `/login`, `/signup`
+- API routes: call `supabase.auth.getUser()` via `createServerClient()` before every DB or AI operation
+- RLS uses `auth.uid()` natively — no JWT mapping needed
+- `users.id` = `auth.uid()` directly (no separate clerk_id column)
 
 ---
 

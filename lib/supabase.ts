@@ -1,34 +1,31 @@
-'use server'
-
+import { createServerClient as createSSRServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
-import type { Database } from './types/database'
+import { cookies } from 'next/headers'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
 
-// Browser client — uses anon key, respects RLS
-// Import from @/lib/supabase-browser on the client side
-export function createBrowserClient() {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey)
-}
-
-// Server client with Clerk JWT — used in API routes and Server Components
-// Pass the Clerk session token so Supabase RLS resolves auth.uid() correctly
-export function createServerClient(clerkToken: string) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    global: {
-      headers: {
-        Authorization: `Bearer ${clerkToken}`,
+// Server client — reads/writes auth cookies automatically, respects RLS via auth.uid()
+// Use in Server Components, API route handlers, and Server Actions
+export async function createServerClient() {
+  const cookieStore = await cookies()
+  return createSSRServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll: () => cookieStore.getAll(),
+      setAll: (cookiesToSet) => {
+        cookiesToSet.forEach(({ name, value, options }) =>
+          cookieStore.set(name, value, options)
+        )
       },
     },
   })
 }
 
-// Service role client — bypasses RLS, only for admin operations
-// (scraper writes, webhook handlers, migrations)
+// Service role client — bypasses RLS entirely
+// Only for: scraper writes, webhook handlers, admin operations
 export function createAdminClient() {
-  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+  return createClient(supabaseUrl, supabaseServiceKey, {
     auth: { persistSession: false },
   })
 }

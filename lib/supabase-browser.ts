@@ -1,12 +1,12 @@
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from './types/database'
+import { createBrowserClient } from '@supabase/ssr'
 
 // Singleton browser client — import this in Client Components
-let client: ReturnType<typeof createClient<Database>> | null = null
+// Automatically syncs auth state with server via cookies
+let client: ReturnType<typeof createBrowserClient> | null = null
 
 export function getBrowserClient() {
   if (!client) {
-    client = createClient<Database>(
+    client = createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )

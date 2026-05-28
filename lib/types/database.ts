@@ -4,8 +4,7 @@ export type DocumentType = 'tailored_cv' | 'cover_letter' | 'recruiter_msg'
 export type ScrapeJobStatus = 'queued' | 'running' | 'done' | 'failed'
 
 export interface User {
-  id: string
-  clerk_id: string
+  id: string           // = auth.uid() from Supabase Auth
   name: string | null
   email: string | null
   location: string | null
@@ -118,7 +117,7 @@ type TableDef<Row, Insert, Update> = {
 export interface Database {
   public: {
     Tables: {
-      users: TableDef<User, Omit<User, 'id' | 'created_at'>, Partial<Omit<User, 'id'>>>
+      users: TableDef<User, Omit<User, 'created_at'>, Partial<Omit<User, 'id'>>>
       cvs: TableDef<CV, Omit<CV, 'id' | 'created_at'>, Partial<Omit<CV, 'id'>>>
       jobs: TableDef<Job, Omit<Job, 'id' | 'scraped_at'>, Partial<Omit<Job, 'id'>>>
       user_jobs: TableDef<UserJob, Omit<UserJob, 'id' | 'created_at'>, Partial<Omit<UserJob, 'id'>>>
